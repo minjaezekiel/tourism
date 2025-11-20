@@ -175,6 +175,57 @@ html {
   opacity: 0.2;
 }
 
+/* Admin Dashboard Styles */
+.admin-login-page,
+.forgot-password-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.admin-dashboard .nav-pills .nav-link {
+  color: #333;
+  border-radius: 0;
+}
+
+.admin-dashboard .nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+}
+
+.admin-dashboard .nav-pills .nav-link:hover {
+  background-color: rgba(212, 160, 23, 0.1);
+}
+
+.blog-post-content img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.like-section button {
+  transition: all 0.3s ease;
+}
+
+.like-section button:hover {
+  transform: scale(1.05);
+}
+
+.testimonial-section {
+  border-top: 1px solid #dee2e6;
+  padding-top: 20px;
+}
+
+/* Responsive adjustments for admin */
+@media (max-width: 768px) {
+  .admin-dashboard .col-md-3 {
+    margin-bottom: 20px;
+  }
+}
+
 /* Contact Section */
 .contact-section {
   background-color: var(--light-color);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import Navbar from './../components/Navbar.jsx';
@@ -11,10 +12,12 @@ import Blog from './../components/Blog';
 import Contact from './../components/Contact';
 import Footer from './../components/Footer';
 import WhatsAppButton from './../components/WhatsAppButton';
+import AdminLogin from './../pages/AdminLogin';
+import ForgotPassword from './../pages/ForgotPassword';
+import AdminDashboard from './../pages/AdminDashBoard';
 
 /**
- * Main App component that renders all sections of the Tanzania Corridors Explorers website
- * Manages the active section state for navigation highlighting
+ * Main App component with routing
  */
 function App() {
   // State to track the active section for navigation highlighting
@@ -43,19 +46,32 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <Navbar activeSection={activeSection} />
-      <Hero />
-      <About />
-      <Tours />
-      <Gallery />
-      <Testimonials />
-      <Blog />
-      <Contact />
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    <Router>
+      <Routes>
+        {/* Main Website Routes */}
+        <Route path="/" element={
+          <div className="App">
+            <Navbar activeSection={activeSection} />
+            <Hero />
+            <About />
+            <Tours />
+            <Gallery />
+            <Testimonials />
+            <Blog />
+            <Contact />
+            <Footer />
+            <WhatsAppButton />
+          </div>
+        } />
+
+        {/* Admin Routes */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      </Routes>
+    </Router>
   );
 }
+
 
 export default App;

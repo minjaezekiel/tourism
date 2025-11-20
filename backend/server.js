@@ -10,6 +10,7 @@ const frontendPath = path.join(__dirname, './../tce_frontend/dist')
 const user = require("./models/users")
 const contact = require("./models/contacts")
 const contactRouter = require("./routes/contacts.routes")
+const blogRouter = require("./routes/blog.routes")
 //const router = express.Router()
 
 //connecting to database...
@@ -18,7 +19,7 @@ const contactRouter = require("./routes/contacts.routes")
 //middleware
 //allow use of cors on debug mode 
 //app.use(cors()) 
-app.use(helmet)
+//app.use(helmet())
 app.use(express.json()) 
 //app.use(router)
 //serving static files from the dist dir...(frontend build)
@@ -39,12 +40,12 @@ const createUser = async ()=>{
 try{
   const newUser =new user(
   {
-    first_name: "Zekiel",
-    last_name: "Minja",
-    username: "minjazekiel",
-    email: "ezekielminja@gmail.com",
+    first_name: "Zack",
+    last_name: "Finder",
+    username: "zachfinders",
+    email: "zackfinder@gmail.com",
     password: "123456789",
-    isAdmin: true
+    isAdmin: false
   }
 )
 await newUser.save()
@@ -53,7 +54,7 @@ console.log(`New user created: \n ${newUser}`)
   console.error(`Error creating user: \n ${err.message}`)
 }
 } 
-createUser();
+//createUser();
 
 const createContact = async ()=>{
   try{
@@ -78,6 +79,7 @@ console.log(`Contact saved successfully: \n ${newContact}`)
 //routes
 //app.use("/admin",loginRouter)
 app.use("/contactUs", contactRouter,(req,res,next)=>{console.log("Main route working"),next()})
+app.use("/blog",blogRouter)
 /*router.route("/contactUs").post(async(req,res)=>{
 try{
 const {name, email, phone, tour, message} = req.body
@@ -123,7 +125,7 @@ const startServer = async () => {
 
     // 2.  it's safe to run your function
     //await createContact(); 
-    await createUser
+    //await createUser
     
     app.listen(3000, () => {
       console.log('App listening on port 127.0.0.1:3000/');
