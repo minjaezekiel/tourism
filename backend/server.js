@@ -7,9 +7,10 @@ const path = require("path")
 const connectDB = require("./config/dbconfig")
 const port = process.env.PORT||3000
 const frontendPath = path.join(__dirname, './../tce_frontend/dist')
-const user = require("./models/users")
-const contact = require("./models/contacts")
+//const user = require("./models/users")
+//const contact = require("./models/contacts")
 const contactRouter = require("./routes/contacts.routes")
+const userRouter = require('./routes/user.routes')
 const blogRouter = require("./routes/blog.routes")
 //const router = express.Router()
 
@@ -18,7 +19,7 @@ const blogRouter = require("./routes/blog.routes")
 
 //middleware
 //allow use of cors on debug mode 
-//app.use(cors()) 
+app.use(cors()) 
 //app.use(helmet())
 app.use(express.json()) 
 //app.use(router)
@@ -40,21 +41,21 @@ const createUser = async ()=>{
 try{
   const newUser =new user(
   {
-    first_name: "Zack",
-    last_name: "Finder",
-    username: "zachfinders",
-    email: "zackfinder@gmail.com",
+    first_name: "LightOne",
+    last_name: "Admin",
+    username: "lightoneadmin",
+    email: "lightoneadmin@gmail.com",
     password: "123456789",
-    isAdmin: false
+    isAdmin: true
   }
 )
 await newUser.save()
 console.log(`New user created: \n ${newUser}`)
 }catch(err){
-  console.error(`Error creating user: \n ${err.message}`)
+  console.error(`Error creating user: \n ${err}`)
 }
 } 
-//createUser();
+createUser();
 
 const createContact = async ()=>{
   try{
@@ -78,7 +79,8 @@ console.log(`Contact saved successfully: \n ${newContact}`)
 
 //routes
 //app.use("/admin",loginRouter)
-app.use("/contactUs", contactRouter,(req,res,next)=>{console.log("Main route working"),next()})
+app.use('/users',(req,res,next)=>{console.log("Users route working"),next()},userRouter)
+app.use("/contactUs", contactRouter,(req,res,next)=>{console.log("Contact route working"),next()})
 app.use("/blog",blogRouter)
 /*router.route("/contactUs").post(async(req,res)=>{
 try{
@@ -125,7 +127,7 @@ const startServer = async () => {
 
     // 2.  it's safe to run your function
     //await createContact(); 
-    //await createUser
+    //await createUser()
     
     app.listen(3000, () => {
       console.log('App listening on port 127.0.0.1:3000/');

@@ -1,5 +1,6 @@
 const blog = require("./../models/blog")
 
+
 //create post controller
 const createPost = async (req,res)=>{
     try{

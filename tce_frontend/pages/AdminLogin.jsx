@@ -1,13 +1,20 @@
+// src/components/AdminLogin.jsx (or wherever your file is)
+
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios'; // 1. Import axios
 
 /**
  * Admin login page component
  */
 const AdminLogin = () => {
+  // 2. useNavigate hook for programmatic navigation
+  const navigate = useNavigate();
+
+  // 3. Updated form data to use 'email' to match the backend
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -26,17 +33,28 @@ const AdminLogin = () => {
     setLoading(true);
     setError('');
 
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.username === 'admin' && formData.password === 'password') {
-        // Store login status in localStorage
-        localStorage.setItem('isAdminLoggedIn', 'true');
-        window.location.href = '/admin-dashboard';
+    try {
+      // 4. Make the API call to your backend
+      const response = await axios.post(`http://127.0.0.1:3000/users/login`, formData);
+
+      // 5. On successful login, store the JWT token
+      const { token } = response.data;
+      localStorage.setItem('token', token); // Store token in localStorage
+
+      // 6. Redirect to the admin dashboard
+      navigate('/admin-dashboard');
+
+    } catch (err) {
+      // 7. Handle errors (e.g., invalid credentials, network error)
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message); // Display error from backend
       } else {
-        setError('Invalid username or password');
+        setError('Something went wrong. Please try again.');
       }
+    } finally {
+      // 8. Set loading to false regardless of outcome
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -54,14 +72,15 @@ const AdminLogin = () => {
                 {error && <Alert variant="danger">{error}</Alert>}
 
                 <Form onSubmit={handleSubmit}>
+                  {/* 9. Changed form field from username to email */}
                   <Form.Group className="mb-3">
-                    <Form.Label>Username</Form.Label>
+                    <Form.Label>Email address</Form.Label>
                     <Form.Control
-                      type="text"
-                      name="username"
-                      value={formData.username}
+                      type="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      placeholder="Enter username"
+                      placeholder="Enter email"
                       required
                     />
                   </Form.Group>
@@ -93,12 +112,6 @@ const AdminLogin = () => {
                     </Link>
                   </div>
                 </Form>
-
-                <div className="text-center mt-4">
-                  <small className="text-muted">
-                    Demo credentials: admin / password
-                  </small>
-                </div>
               </Card.Body>
             </Card>
           </Col>
