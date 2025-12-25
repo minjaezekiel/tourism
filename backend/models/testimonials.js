@@ -1,15 +1,26 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-//testimonial schema
-const tSchema = new Schema(
-    {
-        fullname: {type:String,required:true},
-        content: {type:String,required:true},
-        country: {type:String,required:true}
+const testimonialSchema = new mongoose.Schema(
+  {
+    fullname: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 3
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 10
+    },
+    country: {
+      type: String,
+      required: true,
+      trim: true
     }
-)
+  },
+  { timestamps: true }
+);
 
-const testimonial = mongoose.model("Testimonials",tSchema)
-
-module.exports = testimonial
+module.exports = mongoose.model('Testimonial', testimonialSchema);

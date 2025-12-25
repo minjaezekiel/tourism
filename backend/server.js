@@ -7,11 +7,12 @@ const path = require("path")
 const connectDB = require("./config/dbconfig")
 const port = process.env.PORT||3000
 const frontendPath = path.join(__dirname, './../tce_frontend/dist')
-//const user = require("./models/users")
+const user = require("./models/users")
 //const contact = require("./models/contacts")
 const contactRouter = require("./routes/contacts.routes")
 const userRouter = require('./routes/user.routes')
 const blogRouter = require("./routes/blog.routes")
+const testimonialsRouter = require('./routes/testimonial.routes')
 //const router = express.Router()
 
 //connecting to database...
@@ -55,7 +56,7 @@ console.log(`New user created: \n ${newUser}`)
   console.error(`Error creating user: \n ${err}`)
 }
 } 
-createUser();
+//createUser();
 
 const createContact = async ()=>{
   try{
@@ -82,6 +83,7 @@ console.log(`Contact saved successfully: \n ${newContact}`)
 app.use('/users',(req,res,next)=>{console.log("Users route working"),next()},userRouter)
 app.use("/contactUs", contactRouter,(req,res,next)=>{console.log("Contact route working"),next()})
 app.use("/blog",blogRouter)
+app.use('/testimonials', testimonialsRouter);
 /*router.route("/contactUs").post(async(req,res)=>{
 try{
 const {name, email, phone, tour, message} = req.body

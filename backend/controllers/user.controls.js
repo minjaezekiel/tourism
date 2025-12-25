@@ -73,7 +73,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '30d' } // Token expires in 30 days
+      { expiresIn: '1h' } // Token expires in 30 days
     );
 
     // 5. Send the token back to the client
