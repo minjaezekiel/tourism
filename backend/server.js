@@ -13,6 +13,7 @@ const contactRouter = require("./routes/contacts.routes")
 const userRouter = require('./routes/user.routes')
 const blogRouter = require("./routes/blog.routes")
 const testimonialsRouter = require('./routes/testimonial.routes')
+const galleryRouter = require('./routes/gallery.routes');
 //const router = express.Router()
 
 //connecting to database...
@@ -84,6 +85,7 @@ app.use('/users',(req,res,next)=>{console.log("Users route working"),next()},use
 app.use("/contactUs", contactRouter,(req,res,next)=>{console.log("Contact route working"),next()})
 app.use("/blog",blogRouter)
 app.use('/testimonials', testimonialsRouter);
+app.use('/gallery',galleryRouter)
 /*router.route("/contactUs").post(async(req,res)=>{
 try{
 const {name, email, phone, tour, message} = req.body
