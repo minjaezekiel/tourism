@@ -16,14 +16,10 @@ import AdminLogin from './../pages/AdminLogin';
 import ForgotPassword from './../pages/ForgotPassword';
 import AdminDashboard from './../pages/AdminDashBoard';
 
-/**
- * Main App component with routing
- */
 function App() {
-  // State to track the active section for navigation highlighting
   const [activeSection, setActiveSection] = useState('home');
 
-  // Effect to handle scroll events and update active section
+  // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['home', 'about', 'tours', 'gallery', 'testimonials', 'blog', 'contact'];
@@ -45,10 +41,35 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // ==========================
+  // 📊 ANALYTICS TRACKING
+  // ==========================
+  useEffect(() => {
+    const trackVisit = async () => {
+      try {
+        // Determine device type
+        const device =
+          /tablet/i.test(navigator.userAgent) ? 'tablet' :
+          /mobile/i.test(navigator.userAgent) ? 'mobile' :
+          'desktop';
+
+        // Send analytics to backend
+        await fetch('http://127.0.0.1:3000/api/analytics/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ device })
+        });
+      } catch (err) {
+        console.error('Failed to track analytics:', err);
+      }
+    };
+
+    trackVisit();
+  }, []);
+
   return (
     <Router>
       <Routes>
-        {/* Main Website Routes */}
         <Route path="/" element={
           <div className="App">
             <Navbar activeSection={activeSection} />
@@ -64,7 +85,6 @@ function App() {
           </div>
         } />
 
-        {/* Admin Routes */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -72,6 +92,5 @@ function App() {
     </Router>
   );
 }
-
 
 export default App;

@@ -1,26 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const galleryController = require('../controllers/gallery.controller');
+const createUploader = require('../middleware/image.uploader'); // similar to blog uploader
 
-const uploadImage = require('../middleware/image.uploader');
-const {
-  createGalleryItem,
-  getAllGalleryItems,
-  getGalleryItemById,
-  updateGalleryItem,
-  deleteGalleryItem
-} = require('../controllers/gallery.controls');
+const galleryImageUpload = createUploader({
+  destination: 'public/img/gallery',
+  fileSizeLimit: 5 * 1024 * 1024, // 5MB
+  allowedFileTypes: ['image/jpeg', 'image/png', 'image/webp']
+});
 
-// Create
-router.post('/', uploadImage, createGalleryItem);
-
-// Read
-router.get('/', getAllGalleryItems);
-router.get('/:id', getGalleryItemById);
-
-// Update
-router.put('/:id', uploadImage, updateGalleryItem);
-
-// Delete
-router.delete('/:id', deleteGalleryItem);
+router.get('/', galleryController.getGallery);
+router.post('/', galleryImageUpload.single('image'), galleryController.addGalleryImage);
+router.delete('/:id', galleryController.deleteGalleryImage);
 
 module.exports = router;

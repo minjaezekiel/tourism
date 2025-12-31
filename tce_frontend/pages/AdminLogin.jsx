@@ -1,64 +1,81 @@
-// src/components/AdminLogin.jsx (or wherever your file is)
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // 1. Import axios
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
-/**
- * Admin login page component
- */
 const AdminLogin = () => {
-  // 2. useNavigate hook for programmatic navigation
   const navigate = useNavigate();
 
-  // 3. Updated form data to use 'email' to match the backend
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
+  // Auto-clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
   };
 
+  // Handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // 4. Make the API call to your backend
-      const response = await axios.post(`http://127.0.0.1:3000/users/login`, formData);
+      const response = await axios.post(
+        'http://127.0.0.1:3000/users/login',
+        formData
+      );
 
-      // 5. On successful login, store the JWT token
       const { token } = response.data;
-      localStorage.setItem('token', token); // Store token in localStorage
 
-      // 6. Redirect to the admin dashboard
-      navigate('/admin-dashboard');
+      // Save token
+      localStorage.setItem('token', token);
+
+      // Decode token
+      const decoded = jwtDecode(token);
+      //console.log('Decoded token:', decoded);
+
+      // Redirect based on role
+      if (decoded.isAdmin) {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard'); // normal users
+      }
 
     } catch (err) {
-      // 7. Handle errors (e.g., invalid credentials, network error)
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message); // Display error from backend
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else {
-        setError('Something went wrong. Please try again.');
+        setError('Login failed. Please try again.');
       }
     } finally {
-      // 8. Set loading to false regardless of outcome
       setLoading(false);
     }
   };
 
   return (
-    <div className="admin-login-page min-vh-100 d-flex align-items-center" style={{ backgroundColor: '#f8f9fa' }}>
+    <div
+      className="admin-login-page min-vh-100 d-flex align-items-center"
+      style={{ backgroundColor: '#f8f9fa' }}
+    >
       <Container>
         <Row className="justify-content-center">
           <Col lg={5} md={7}>
@@ -69,10 +86,13 @@ const AdminLogin = () => {
                   <p className="text-muted">Tanzania Corridors Explorers</p>
                 </div>
 
-                {error && <Alert variant="danger">{error}</Alert>}
+                {error && (
+                  <Alert variant="danger">
+                    {error.length > 100 ? error.slice(0, 100) + '...' : error}
+                  </Alert>
+                )}
 
                 <Form onSubmit={handleSubmit}>
-                  {/* 9. Changed form field from username to email */}
                   <Form.Group className="mb-3">
                     <Form.Label>Email address</Form.Label>
                     <Form.Control
@@ -85,15 +105,21 @@ const AdminLogin = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4">
+                  <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Enter password"
                       required
+                    />
+                    <Form.Check
+                      type="checkbox"
+                      label="Show Password"
+                      className="mt-2"
+                      onChange={() => setShowPassword(prev => !prev)}
                     />
                   </Form.Group>
 
@@ -103,15 +129,21 @@ const AdminLogin = () => {
                     className="w-100 mb-3"
                     disabled={loading}
                   >
-                    {loading ? 'Logging in...' : 'Login'}
+                    {loading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        Logging in...
+                      </>
+                    ) : (
+                      'Login'
+                    )}
                   </Button>
-
-                  <div className="text-center">
-                    <Link to="/forgot-password" className="text-decoration-none">
-                      Forgot Password?
-                    </Link>
-                  </div>
                 </Form>
+
               </Card.Body>
             </Card>
           </Col>

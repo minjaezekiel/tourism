@@ -46,8 +46,12 @@ const registerUser = async (req, res) => {
   }
 };
 
+
+
+
 // --- Function to handle user login ---
 const loginUser = async (req, res) => {
+
   try {
     const { email, password } = req.body;
 
@@ -60,26 +64,36 @@ const loginUser = async (req, res) => {
     // 2. Compare the provided password with the stored hashed password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Either email or password is incorrect' }); // Generic error for security
+      return res.status(400).json({ message: 'Either email or password is incorrect' }); 
+      
+      // Generic error for security
     }
 
     // 3. If credentials are correct, create a JWT payload
     const payload = {
       id: user._id,
-      isAdmin: user.isAdmin // Include role in the token
+      isAdmin: user.isAdmin 
+      // Include role in the token
     };
-
+//console.log(user.isAdmin)
     // 4. Sign the token
     const token = jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: '1h' } // Token expires in 30 days
+      { expiresIn: '30d' }
+                             
+// Token expires in 30 days
     );
 
+    
+    console.log(token)
+
+  
     // 5. Send the token back to the client
     res.status(200).json({
       message: 'Login successful!',
-      token: token
+      token: token,
+      
     });
 
   } catch (error) {
