@@ -1,4 +1,4 @@
-const Gallery = require('../models/Gallery');
+const Gallery = require('../models/gallery');
 
 // Get all gallery images
 exports.getGallery = async (req, res) => {
