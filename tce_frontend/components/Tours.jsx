@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Spinner, Alert, Button } from "react-bootstrap";
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Public Tours section
@@ -13,7 +14,7 @@ const Tours = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:3000/tours");
+        const res = await fetch(`${API_URL}/tours`);
 
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -74,7 +75,7 @@ const Tours = () => {
                       variant="top"
                       src={
                         tour.image
-                          ? `http://127.0.0.1:3000${tour.image}`
+                          ? `${API_URL}${tour.image}`
                           : "/placeholder.png"
                       }
                       alt={tour.title}

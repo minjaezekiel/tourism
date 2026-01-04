@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Table, Button, Modal, Form, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const BlogTab = () => {
   const [blogPosts, setBlogPosts] = useState([]);
@@ -13,7 +14,7 @@ const BlogTab = () => {
   const fetchBlogPosts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:3000/blog');
+      const res = await fetch(`${API_URL}/blog`);
       const data = await res.json();
       setBlogPosts(data.data);
     } catch (err) {
@@ -35,9 +36,9 @@ const BlogTab = () => {
 
     try {
       if (editingPost) {
-        await fetch(`http://127.0.0.1:3000/blog/${editingPost._id}`, { method: 'PUT', body: formData });
+        await fetch(`${API_URL}/blog/${editingPost._id}`, { method: 'PUT', body: formData });
       } else {
-        await fetch('http://127.0.0.1:3000/blog', { method: 'POST', body: formData });
+        await fetch(`${API_URL}/blog`, { method: 'POST', body: formData });
       }
       setNewPost({ title: '', content: '', image: null });
       setEditingPost(null);
@@ -50,7 +51,7 @@ const BlogTab = () => {
 
   const handleDeletePost = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:3000/blog/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/blog/${id}`, { method: 'DELETE' });
       fetchBlogPosts();
     } catch (err) {
       console.error(err);

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, Table, Button, Modal, Form, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-
-const API_URL = "http://127.0.0.1:3000/tours";
+const API_URL = import.meta.env.VITE_API_URL;
+//const API_URL = "http://127.0.0.1:3000/tours";
 
 const ToursTab = () => {
   const [tours, setTours] = useState([]);
@@ -25,7 +25,7 @@ const ToursTab = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(API_URL, { signal: controller.signal });
+      const res = await fetch(`${API_URL}/tours`, { signal: controller.signal });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
 
       const data = await res.json();
@@ -64,8 +64,8 @@ const ToursTab = () => {
 
     try {
       const url = editingTour
-        ? `${API_URL}/${editingTour._id}`
-        : API_URL;
+        ? `${API_URL}/tours/${editingTour._id}`
+        : `${API_URL}/tours`;
 
       const method = editingTour ? "PUT" : "POST";
 
@@ -99,7 +99,7 @@ const ToursTab = () => {
     if (!window.confirm("Delete this tour?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/tours/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
 
       fetchTours();

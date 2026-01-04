@@ -1,7 +1,13 @@
+require("dotenv").config()
 const mongoose = require("mongoose");
 const User = require("./models/users"); // adjust if path differs
+const user = process.env.MONGO_USER
+const pass = process.env.MONGO_PASS
+const host = process.env.MONGO_HOST
 
-const MONGO_URI = "mongodb://localhost:27017/tourism"; 
+
+ 
+const MONGO_URI = `mongodb://${user}:${encodeURIComponent(pass)}@${host}?authSource=admin`
 // 👆 I added a database name (IMPORTANT)
 
 const seedAdmin = async () => {

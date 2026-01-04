@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const AdminLogin = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:3000/users/login',
+        `${API_URL}/users/login`,
         formData
       );
 

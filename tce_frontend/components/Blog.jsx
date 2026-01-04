@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import BlogPostModal from './BlogPostModal';
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const Blog = () => {
   const [blogPosts, setBlogPosts] = useState([]);
@@ -12,7 +14,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:3000/blog');
+        const res = await fetch(`${API_URL}/blog`);
         const result = await res.json();
         setBlogPosts(result.data || []);
       } catch (error) {
@@ -55,7 +57,7 @@ const Blog = () => {
                   <Card className="blog-card h-100 shadow-sm">
                     <Card.Img
                       variant="top"
-                      src={`http://127.0.0.1:3000${post.image}`}
+                      src={`${API_URL}${post.image}`}
                       className="blog-card-img"
                     />
                     <Card.Body className="d-flex flex-column">

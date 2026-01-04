@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Table, Button, Spinner, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ContactTab = () => {
   const [messages, setMessages] = useState([]);
@@ -12,7 +13,7 @@ const ContactTab = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:3000/contactUs');
+      const res = await fetch(`${API_URL}/contactUs`);
       const data = await res.json();
       setMessages(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
@@ -35,7 +36,7 @@ const ContactTab = () => {
     if (!window.confirm("Delete this message?")) return;
     
     try {
-      await fetch(`http://127.0.0.1:3000/contactUs/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/contactUs/${id}`, { method: "DELETE" });
       fetchMessages();
     } catch (err) {
       console.error("Failed to delete message:", err);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Gallery section component
@@ -13,7 +14,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:3000/gallery');
+        const res = await fetch(`${API_URL}/gallery`);
 
         if (!res.ok) {
           throw new Error('Failed to fetch gallery');
@@ -58,7 +59,7 @@ const Gallery = () => {
             <Col lg={4} md={6} key={image._id} className="mb-4">
               <div className="gallery-item overflow-hidden rounded shadow-sm">
                 <img
-                  src={`http://127.0.0.1:3000${image.src}`}
+                  src={`${API_URL}${image.src}`}
                   alt={image.alt}
                   className="img-fluid gallery-img"
                   loading="lazy"

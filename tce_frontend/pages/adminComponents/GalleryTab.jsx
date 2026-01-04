@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Modal, Form, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const GalleryTab = () => {
   const [galleryImages, setGalleryImages] = useState([]);
@@ -12,7 +13,7 @@ const GalleryTab = () => {
   const fetchGallery = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:3000/gallery');
+      const res = await fetch(`${API_URL}/gallery`);
       const data = await res.json();
       setGalleryImages(Array.isArray(data) ? data.map(img => ({ ...img, id: img._id })) : []);
     } catch (err) {
@@ -34,7 +35,7 @@ const GalleryTab = () => {
     formData.append('image', newImage.image);
 
     try {
-      const res = await fetch('http://127.0.0.1:3000/gallery', { method: 'POST', body: formData });
+      const res = await fetch(`${API_URL}/gallery`, { method: 'POST', body: formData });
       const savedImage = await res.json();
       setGalleryImages([...galleryImages, { ...savedImage, id: savedImage._id }]);
       setNewImage({ alt: '', image: null });
@@ -46,7 +47,7 @@ const GalleryTab = () => {
 
   const handleDeleteImage = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:3000/gallery/${id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/gallery/${id}`, { method: 'DELETE' });
       setGalleryImages(galleryImages.filter(img => img.id !== id));
     } catch (err) {
       console.error('Failed to delete gallery image:', err);
@@ -77,7 +78,7 @@ const GalleryTab = () => {
             {galleryImages.map(image => (
               <Col md={4} key={image.id} className="mb-3">
                 <Card>
-                  <Card.Img variant="top" src={`http://127.0.0.1:3000${image.src}`} />
+                  <Card.Img variant="top" src={`${API_URL}${image.src}`} />
                   <Card.Body>
                     <p className="mb-2">{image.alt}</p>
                     <Button variant="danger" size="sm" onClick={() => handleDeleteImage(image.id)}>

@@ -17,6 +17,7 @@ import GalleryTab from './adminComponents/GalleryTab';
 import BlogTab from './adminComponents/BlogTab';
 import ToursTab from './adminComponents/ToursTab';
 import ContactTab from './adminComponents/ContactTab';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
     // Fetch analytics data
     const fetchAnalytics = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:3000/api/analytics');
+        const res = await fetch(`${API_URL}/api/analytics`);
         const data = await res.json();
         setAnalytics(data);
       } catch (err) {

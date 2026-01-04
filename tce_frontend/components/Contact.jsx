@@ -7,6 +7,7 @@ import {
   faEnvelope, 
   faClock 
 } from '@fortawesome/free-solid-svg-icons';
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Contact section component with contact form and information
@@ -40,7 +41,7 @@ const Contact = () => {
     setFormSubmitted(false); // Clear previous success message
 
     try {
-      const response = await fetch('http://127.0.0.1:3000/contactUs', {
+      const response = await fetch(`${API_URL}/contactUs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
