@@ -15,6 +15,7 @@ import WhatsAppButton from './../components/WhatsAppButton';
 import AdminLogin from './../pages/AdminLogin';
 import ForgotPassword from './../pages/ForgotPassword';
 import AdminDashboard from './../pages/AdminDashBoard';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -54,7 +55,7 @@ function App() {
           'desktop';
 
         // Send analytics to backend
-        await fetch('http://127.0.0.1:3000/api/analytics/track', {
+        await fetch(`${API_URL}/api/analytics/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ device })
