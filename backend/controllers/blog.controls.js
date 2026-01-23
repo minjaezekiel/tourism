@@ -114,7 +114,7 @@ const updatePost = async (req, res) => {
 //delete post
 const deletePost = async (req, res) => {
     try {
-        console.log(req.params.id);
+        //console.log(req.params.id);
         const post = await blog.findById(req.params.id);
         console.log(post);
         if (!post) {
