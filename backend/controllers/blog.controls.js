@@ -80,7 +80,7 @@ const getPostById = async (req, res) => {
 const updatePost = async (req, res) => {
     try {
         const { title, content } = req.body;
-        let post = await Blog.findById(req.params.id);
+        let post = await blog.findById(req.params.id);
 
         if (!post) {
             return res.status(404).json({ message: "Blog post not found" });
@@ -97,7 +97,7 @@ const updatePost = async (req, res) => {
         // Save safely with validation + hooks
         await post.save();
 
-        post = await Blog.findById(req.params.id).populate("author", "username");
+        post = await blog.findById(req.params.id).populate("author", "username");
 
         console.log(`Blog post updated successfully...\n${post}`)
 
@@ -114,7 +114,9 @@ const updatePost = async (req, res) => {
 //delete post
 const deletePost = async (req, res) => {
     try {
-        const post = await Blog.findById(req.params.id);
+        console.log(req.params.id);
+        const post = await blog.findById(req.params.id);
+        console.log(post);
         if (!post) {
             return res.status(404).json({ message: "Blog post not found" });
         }
