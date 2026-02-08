@@ -129,7 +129,7 @@ const Footer = () => {
                   <span className="me-2">
                     <FontAwesomeIcon icon="phone" />
                   </span>
-                  <span>+255 123 456 789</span>
+                  <span>+255 623 660 096</span>
                 </li>
                 <li className="mb-3 d-flex align-items-start">
                   <span className="me-2">

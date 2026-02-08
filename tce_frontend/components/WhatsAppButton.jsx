@@ -12,7 +12,7 @@ const WhatsAppButton = () => {
   );
   
   // WhatsApp number (replace with actual number)
-  const whatsappNumber = "255123456789";
+  const whatsappNumber = "255623660096";
   
   // WhatsApp URL
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
