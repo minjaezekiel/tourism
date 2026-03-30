@@ -8,7 +8,9 @@ import {
   faBlog,
   faSignOutAlt,
   faEnvelope,
-  faGlobe
+  faGlobe,
+  faMoon,
+  faSun
 } from '@fortawesome/free-solid-svg-icons';
 
 // Import tab components
@@ -17,35 +19,38 @@ import GalleryTab from './adminComponents/GalleryTab';
 import BlogTab from './adminComponents/BlogTab';
 import ToursTab from './adminComponents/ToursTab';
 import ContactTab from './adminComponents/ContactTab';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('analytics');
-  const [loadingAnalytics, setLoadingAnalytics] = useState(true);
-  const [analytics, setAnalytics] = useState(null);
+
+  // ==========================
+  // 🌙 DAY/NIGHT MODE STATE
+  // ==========================
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
 
   useEffect(() => {
-    // Check if admin is logged in
+    // Apply theme to the root HTML element
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  // ==========================
+  // 🔐 AUTH & LOGOUT
+  // ==========================
+  useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/admin-login');
-      return;
     }
-
-    // Fetch analytics data
-    const fetchAnalytics = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/analytics`);
-        const data = await res.json();
-        setAnalytics(data);
-      } catch (err) {
-        console.error('Failed to load analytics');
-      } finally {
-        setLoadingAnalytics(false);
-      }
-    };
-    fetchAnalytics();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -54,19 +59,34 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard min-vh-100" style={{ backgroundColor: '#f8f9fa' }}>
+    // FIX: Use Bootstrap CSS variable so background automatically changes with Dark/Light mode
+    <div className="admin-dashboard min-vh-100" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
+      
       {/* Header */}
-      <div className="admin-header bg-white shadow-sm py-3 mb-4">
+      <div className="admin-header shadow-sm py-3 mb-4 border-bottom" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
         <Container fluid>
           <Row className="align-items-center">
             <Col>
               <h3 className="mb-0 text-primary">Admin Dashboard</h3>
             </Col>
             <Col className="text-end">
-              <Button variant="outline-danger" onClick={handleLogout}>
-                <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
-                Logout
-              </Button>
+              <div className="d-flex justify-content-end gap-2">
+                {/* 🌙 DARK MODE TOGGLE BUTTON */}
+                <Button 
+                  variant={theme === 'light' ? 'outline-secondary' : 'outline-light'} 
+                  size="sm" 
+                  onClick={toggleTheme}
+                  className="rounded-pill px-3"
+                >
+                  <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} className="me-1" />
+                  {theme === 'light' ? 'Dark' : 'Light'}
+                </Button>
+
+                <Button variant="outline-danger" onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                  Logout
+                </Button>
+              </div>
             </Col>
           </Row>
         </Container>
@@ -118,27 +138,22 @@ const AdminDashboard = () => {
             {/* Content */}
             <Col md={9}>
               <Tab.Content>
-                {/* Analytics Tab */}
                 <Tab.Pane eventKey="analytics">
-                  <AnalyticsTab loading={loadingAnalytics} analytics={analytics} />
+                  <AnalyticsTab />
                 </Tab.Pane>
 
-                {/* Gallery Tab */}
                 <Tab.Pane eventKey="gallery">
                   <GalleryTab />
                 </Tab.Pane>
 
-                {/* Blog Tab */}
                 <Tab.Pane eventKey="blog">
                   <BlogTab />
                 </Tab.Pane>
 
-                {/* Tours Tab */}
                 <Tab.Pane eventKey="tours">
                   <ToursTab />
                 </Tab.Pane>
 
-                {/* Contact Tab */}
                 <Tab.Pane eventKey="contact">
                   <ContactTab />
                 </Tab.Pane>

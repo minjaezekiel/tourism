@@ -3,13 +3,15 @@ import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AdminLogin = () => {
   const navigate = useNavigate();
 
+  // ✅ FIXED: Changed 'email' to 'username'
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
 
@@ -42,7 +44,7 @@ const AdminLogin = () => {
     try {
       const response = await axios.post(
         `${API_URL}/users/login`,
-        formData
+        formData // Now sends { username: "...", password: "..." }
       );
 
       const { token } = response.data;
@@ -52,7 +54,6 @@ const AdminLogin = () => {
 
       // Decode token
       const decoded = jwtDecode(token);
-      //console.log('Decoded token:', decoded);
 
       // Redirect based on role
       if (decoded.isAdmin) {
@@ -94,18 +95,20 @@ const AdminLogin = () => {
                 )}
 
                 <Form onSubmit={handleSubmit}>
+                  {/* ✅ FIXED: Username Field */}
                   <Form.Group className="mb-3">
-                    <Form.Label>Email address</Form.Label>
+                    <Form.Label>Username</Form.Label>
                     <Form.Control
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                      type="text" // Changed from "email" to "text"
+                      name="username" // Changed from "email" to "username"
+                      value={formData.username} // Changed from formData.email
                       onChange={handleChange}
-                      placeholder="Enter email"
+                      placeholder="Enter username"
                       required
                     />
                   </Form.Group>
 
+                  {/* Password Field (Unchanged) */}
                   <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
@@ -124,6 +127,7 @@ const AdminLogin = () => {
                     />
                   </Form.Group>
 
+                  {/* Submit Button (Unchanged) */}
                   <Button
                     variant="primary"
                     type="submit"
