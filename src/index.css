@@ -1,0 +1,321 @@
+/* 
+By  Minja & Plannes;
+M Enterprises
+
+*/
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+:root {
+  --primary-color: #d4a017; /* Gold */
+  --secondary-color: #8b4513; /* Brown */
+  --accent-color: #228b22; /* Green */
+  --light-color: #f5f5dc; /* Beige */
+  --dark-color: #333333;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.section-padding {
+  padding: 80px 0;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* Additional CSS */
+
+/* Navbar styles */
+.navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.navbar-scrolled {
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+
+
+/* Force custom sections to respect Bootstrap Dark Mode */
+#home, #about, #tours, #gallery, #testimonials, #blog, #contact {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Make sure cards and images transition smoothly */
+.card, img {
+  transition: filter 0.3s ease;
+}
+.navbar-brand {
+  font-weight: 700;
+  color: var(--primary-color) !important;
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+  color: var(--dark-color) !important;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--primary-color) !important;
+}
+
+/* Hero Section */
+.hero-section {
+  height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://picsum.photos/seed/tanzania-safari/1920/1080.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+/* About Section */
+.about-section {
+  background-color: var(--light-color);
+}
+
+/* Tours Section */
+.tour-card {
+  transition: all 0.3s ease;
+}
+
+.tour-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.tour-card-img {
+  height: 250px;
+  object-fit: cover;
+}
+
+.tour-price {
+  color: var(--primary-color);
+}
+
+/* Gallery Section */
+.gallery-item {
+  transition: all 0.3s ease;
+}
+
+.gallery-img {
+  transition: all 0.3s ease;
+}
+
+.gallery-item:hover .gallery-img {
+  transform: scale(1.1);
+}
+
+/* Testimonials Section */
+.testimonial-card {
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '\f10d';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 2rem;
+  color: var(--primary-color);
+  opacity: 0.2;
+}
+
+/* Admin Dashboard Styles */
+.admin-login-page,
+.forgot-password-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.admin-dashboard .nav-pills .nav-link {
+  color: #333;
+  border-radius: 0;
+}
+
+.admin-dashboard .nav-pills .nav-link.active {
+  background-color: var(--primary-color);
+}
+
+.admin-dashboard .nav-pills .nav-link:hover {
+  background-color: rgba(212, 160, 23, 0.1);
+}
+
+.blog-post-content img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.like-section button {
+  transition: all 0.3s ease;
+}
+
+.like-section button:hover {
+  transform: scale(1.05);
+}
+
+.testimonial-section {
+  border-top: 1px solid #dee2e6;
+  padding-top: 20px;
+}
+
+/* Responsive adjustments for admin */
+@media (max-width: 768px) {
+  .admin-dashboard .col-md-3 {
+    margin-bottom: 20px;
+  }
+}
+
+/* Contact Section */
+.contact-section {
+  background-color: var(--light-color);
+}
+
+.icon-box {
+  width: 40px;
+  text-align: center;
+}
+
+/* Blog Section */
+.blog-card {
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.blog-card-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.blog-meta {
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.footer-links a {
+  color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--primary-color);
+}
+
+.social-links a {
+  transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+  background-color: var(--primary-color) !important;
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #25d366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  background-color: #128c7e;
+  transform: scale(1.1);
+  color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 1.1rem;
+  }
+  
+  .section-padding {
+    padding: 60px 0;
+  }
+}
