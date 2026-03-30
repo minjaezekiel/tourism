@@ -1,27 +1,49 @@
-require("dotenv").config()
-const mongoose = require("mongoose");
-const MONGO_URI = process.env.MONGO_URI
-const user = process.env.MONGO_USER
-const pass = process.env.MONGO_PASS
-const host = process.env.MONGO_HOST
+// server.js (updated part)
+const UltraORM = require('ultraorm');
+const { User, Analytics, Blog, Contact, Gallery, Testimonials, Tours } = require("./models");
 
-/*
-IN PRODUCTION USE THIS:
+// Initialize UltraORM
+const orm = new UltraORM({
+  type: process.env.DB_TYPE || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'admin',
+  database: process.env.DB_NAME || 'postgres',
+  port: parseInt(process.env.DB_PORT) || 5432
+});
 
-const conn = await mongoose.connect(`mongodb://${user}:${encodeURIComponent(pass)}@${host}?authSource=admin`)
-*/
-const connectDB = async ()=>{
-    try{
-        //connect to mongodb MONGO_URI=mongodb://${user}:${pass}@${host}
-        const conn = await mongoose.connect(`mongodb+srv://${user}:${pass}@${host}`)
-        console.log(`Connected to MongoDB successfully...`)
-    }catch(error){
-        //if mongoDB connection fails, display error...
-        console.error(`Error connecting to database..., ${error.message}`)
-        //exiting process with a failure
-        process.exit(1)
+// Register models
+orm.registerModel(User);
+orm.registerModel(Analytics);
+orm.registerModel(Blog);
+orm.registerModel(Contact);
+orm.registerModel(Gallery);
+orm.registerModel(Testimonials);
+orm.registerModel(Tours);
 
-    }
-}
+// Make ORM available globally
+global.orm = orm;
 
-module.exports = connectDB;
+// ... rest of your server code
+
+// Start server
+const startServer = async () => {
+  try {
+    // Connect to PostgreSQL using UltraORM (NOT the old connectDB)
+    await orm.connect();
+    console.log("✅ Database connected successfully");
+    
+    // Sync all models (create tables)
+    await orm.migrate();
+    console.log("✅ All models synced");
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://127.0.0.1:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

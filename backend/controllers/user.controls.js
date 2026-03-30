@@ -1,123 +1,148 @@
-// controllers/user.controls.js
-require("dotenv").config()
-const bcrypt = require('bcrypt');
+require("dotenv").config();
+const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
-const User = require('./../models/users.js'); // Adjust path if needed
+// ✅ ADDED Sequelize to get access to Op.or
+const { User, sequelize, Sequelize } = require('../models/models');
 
-// --- Function to handle user registration ---
+// --- Register User ---
 const registerUser = async (req, res) => {
   try {
-    const { first_name, last_name, username, email, password } = req.body;
- 
-    // 1. Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User with this email or username already exists.' });
+    const { first_name, last_name, username, password, email } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters.' });
     }
 
-    // 2. Create a new user
-    // The pre-save hook in your model will automatically hash the password
-    const user =  User.create({
+    const existingUser = await User.findOne({ where: { username } });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Username already taken.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
       first_name,
       last_name,
       username,
       email,
-      password,
-      isAdmin: false // Default to false unless explicitly set
+      password: hashedPassword,
+      isAdmin: false
     });
 
-    // 3. Save the user to the database
-    //await user.save();n
-
-    // 4. Respond with success (don't send back the password)
     res.status(201).json({
       message: 'User registered successfully!',
       user: {
-        id: user._id,
+        id: user.id,
         first_name: user.first_name,
         last_name: user.last_name,
         username: user.username,
-        email: user.email,
         isAdmin: user.isAdmin
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("❌ REGISTER ERROR:", error);
+    res.status(500).json({ 
+      message: 'Server error during registration.',
+      error: process.env.NODE_ENV === "development" ? error.message : undefined
+    });
   }
 };
 
-
-
-
-// --- Function to handle user login ---
+// --- Login User ---
 const loginUser = async (req, res) => {
-
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body; // 'username' here acts as email OR username
 
-    // 1. Find the user by email
-    const user = await User.findOne({ email });
+    console.log(`\n🔑 LOGIN ATTEMPT -> Input: "${username}"`);
+
+    if (!username || !password) {
+      console.log("❌ FAILED: Missing username or password");
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
+    // ==========================================
+    // ✅ MAGIC FIX: Allow Email OR Username
+    // ==========================================
+    const searchCondition = username.includes('@') 
+      ? { email: username }      // Search email column if they typed an @
+      : { username: username };  // Search username column otherwise
+
+    const user = await User.findOne({ 
+      where: searchCondition,
+      attributes: { include: ['password'] } 
+    });
+    
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials.' }); // Generic error for security
+      console.log(`❌ FAILED: Account "${username}" not found in database.`);
+      return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
-    // 2. Compare the provided password with the stored hashed password
-    const isMatch = await user.comparePassword(password);
+    console.log(`👤 USER FOUND -> ID: ${user.id}, Hash: ${user.password.substring(0, 15)}...`);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    
     if (!isMatch) {
-      return res.status(400).json({ message: 'Either email or password is incorrect' }); 
-      
-      // Generic error for security
+      console.log(`❌ FAILED: Password does not match.`);
+      return res.status(401).json({ message: 'Invalid credentials.' });
     }
 
-    // 3. If credentials are correct, create a JWT payload
+    if (!process.env.JWT_SECRET) {
+      console.error("❌ FATAL: JWT_SECRET is missing in .env file");
+      throw new Error("Server configuration error: Missing JWT Secret");
+    }
+
     const payload = {
-      id: user._id,
-      isAdmin: user.isAdmin 
-      // Include role in the token
+      id: user.id,
+      isAdmin: user.isAdmin
     };
-//console.log(user.isAdmin)
-    // 4. Sign the token
+
     const token = jwt.sign(
       payload,
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
-                             
-// Token expires in 30 days
     );
 
-    
-    console.log(token)
+    console.log(`✅ LOGIN SUCCESSFUL -> Token generated (Admin: ${user.isAdmin})`);
+    console.log("--------------------------------------------------\n");
 
-  
-    // 5. Send the token back to the client
     res.status(200).json({
       message: 'Login successful!',
-      token: token,
-      
+      token: token
     });
 
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("❌ LOGIN ERROR:", error);
+    res.status(500).json({ 
+      message: 'Server error during login.',
+      error: process.env.NODE_ENV === "development" ? error.message : undefined
+    });
   }
 };
 
-// --- Example of a protected route controller ---
+// --- Get User Profile ---
 const getUserProfile = async (req, res) => {
-  // The 'isAuthenticated' middleware will have already run and attached the user to req.user
   try {
-    // We find the user by ID from the token, but exclude the password field
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] } 
+    });
     
     if (!user) {
-        return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({ message: 'User not found.' });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("❌ PROFILE ERROR:", error);
+    res.status(500).json({ 
+      message: 'Server error fetching profile.',
+      error: process.env.NODE_ENV === "development" ? error.message : undefined
+    });
   }
 };
-
 
 module.exports = {
   registerUser,

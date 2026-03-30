@@ -1,57 +1,34 @@
-require("dotenv").config()
-const mongoose = require("mongoose");
-const User = require("./models/users"); // adjust if path differs
-const user = process.env.MONGO_USER
-const pass = process.env.MONGO_PASS
-const host = process.env.MONGO_HOST
-
-
- 
-const MONGO_URI = `mongodb://${user}:${encodeURIComponent(pass)}@${host}?authSource=admin`
-// 👆 I added a database name (IMPORTANT)
+require('dotenv').config();
+const bcrypt = require('bcrypt'); // ✅ Changed from 'bcryptjs' to match your controller
+const { sequelize, User } = require('./models/models');
 
 const seedAdmin = async () => {
   try {
-    // =======================
-    // CONNECT TO DATABASE
-    // =======================
-    await mongoose.connect(MONGO_URI);
-    console.log("✅ MongoDB connected");
+    await sequelize.authenticate();
+    console.log("✅ Database connected successfully.");
 
-    // =======================
-    // CHECK IF ADMIN EXISTS
-    // =======================
-    const existingAdmin = await User.findOne({ isAdmin: true });
+    // ✅ FIX: Destroy any existing admin so we can force-update the password
+    await User.destroy({ where: { isAdmin: true } });
+    console.log("🧹 Cleared old admin accounts...");
 
-    if (existingAdmin) {
-      console.log("⚠️ Admin already exists:");
-      console.log(`   Email: ${existingAdmin.email}`);
-      process.exit(0);
-    }
+    // Hash the correct password
+    const hashedPassword = await bcrypt.hash("123456789", 10);
 
-    // =======================
-    // CREATE ADMIN
-    // =======================
-    const admin = new User({
+    // Create fresh admin
+    const admin = await User.create({
       first_name: "LightOne",
       last_name: "Admin",
       username: "admin",
-      email: "lightoneadmin@gmail.com",
-      password: "123456789", // auto-hashed by pre-save hook
-      isAdmin: true
+      email: "silivestirassey@gmail.com",
+      password: hashedPassword,
+      isAdmin: true,
     });
 
-    await admin.save();
-
-    console.log("✅ Admin user created successfully");
-    console.log({
-      email: admin.email,
-      username: admin.username,
-      isAdmin: admin.isAdmin
-    });
+    console.log("✅ Admin user created successfully:");
+    console.log(`   Username: ${admin.username}`);
+    console.log(`   Password: 123456789`);
 
     process.exit(0);
-
   } catch (error) {
     console.error("❌ Seeding failed:", error.message);
     process.exit(1);
