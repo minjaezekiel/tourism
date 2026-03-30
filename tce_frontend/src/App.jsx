@@ -15,10 +15,29 @@ import WhatsAppButton from './../components/WhatsAppButton';
 import AdminLogin from './../pages/AdminLogin';
 import ForgotPassword from './../pages/ForgotPassword';
 import AdminDashboard from './../pages/AdminDashBoard';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
+  
+  // ==========================
+  // 🌙 DAY/NIGHT MODE STATE
+  // ==========================
+  const [theme, setTheme] = useState(() => {
+    // Check local storage for saved theme, default to light
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  // Apply theme to the HTML root element whenever it changes
+  useEffect(() => {
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
 
   // Scroll detection
   useEffect(() => {
@@ -48,17 +67,10 @@ function App() {
   useEffect(() => {
     const trackVisit = async () => {
       try {
-        // Determine device type
-        const device =
-          /tablet/i.test(navigator.userAgent) ? 'tablet' :
-          /mobile/i.test(navigator.userAgent) ? 'mobile' :
-          'desktop';
-
-        // Send analytics to backend
         await fetch(`${API_URL}/api/analytics/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ device })
+          body: JSON.stringify({ device: 'desktop' }) // Backend handles real device detection anyway
         });
       } catch (err) {
         console.error('Failed to track analytics:', err);
@@ -73,7 +85,8 @@ function App() {
       <Routes>
         <Route path="/" element={
           <div className="App">
-            <Navbar activeSection={activeSection} />
+            {/* PASS THEME PROPS TO NAVBAR */}
+            <Navbar activeSection={activeSection} theme={theme} toggleTheme={toggleTheme} />
             <Hero />
             <About />
             <Tours />
