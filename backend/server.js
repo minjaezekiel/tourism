@@ -25,6 +25,9 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+console.log("DB USER:", process.env.DB_USER);
+console.log("DB NAME:", process.env.DB_NAME);
+
 // =======================
 // MIDDLEWARE
 // =======================
