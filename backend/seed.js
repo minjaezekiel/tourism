@@ -16,10 +16,10 @@ const seedAdmin = async () => {
 
     // Create fresh admin
     const admin = await User.create({
-      first_name: "LightOne",
+      first_name: "TCE",
       last_name: "Admin",
       username: "admin",
-      email: "silivestirassey@gmail.com",
+      email: "info@tanzaniacorridorsexplorers.com",
       password: hashedPassword,
       isAdmin: true,
     });
